@@ -9,6 +9,8 @@ For now only version with DHT sensor are supported but I plan to add support for
 Copy YAML file of your choice (for now only `higrow_dht.yaml` is tested and working) into your ESPHom folder.
 Change file name to match your future plant name.
 
+You now have option to use MQTT instead of or parallel with API Home Assistant integration.
+
 # Configuration
 
 Minimum reqiured configuration is to adapt/change subsctitution section in YAML file:
@@ -32,6 +34,30 @@ substitutions:
 * `gateway_ip` is you network gateway IP address
 * `subnet_mask` is subnet mask used in your network
 
+## Secrets
+
+Don't forget to add to secrets file:
+```
+wifi_ssid: YOUR_WIFI_SSID
+wifi_password: "YOUT_WIFI_PASSWORD"
+```
+
+Also, if you plan to use MQTT, uncomment MQTT section in YAML file:
+```
+#mqtt:
+#  broker: mqtt_ip
+#  username: mqtt_user
+#  password: mqtt_password
+```
+If you are not useing MQTT authentication with username and password, you can leave them commented out.
+And in secrets file from ESPHome add following 3 lines:
+```
+# MQTT
+mqtt_ip: 192.168.1.XXX
+mqtt_user: MQTT_USER
+mqtt_password: MQTT_PASSWORD
+```
+
 ## Calibration
 
 Calibration is not necessary, but will definitly improve your experience.
@@ -39,3 +65,7 @@ Calibration is not necessary, but will definitly improve your experience.
 I use glass of water to calibrate maximum soil humidity (minimum is just dry it off).
 
 And next optiona calibration is battery maximum V.
+
+## Issues
+
+I'm still playing with battery % as it's not reading it correctly. It always stays at 100%, but I think I've managed to pinpoint on possible issues.

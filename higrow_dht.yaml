@@ -60,6 +60,11 @@ ota:
 
 api:
 
+#mqtt:
+#  broker: mqtt_ip
+#  username: mqtt_user
+#  password: mqtt_password
+
 logger:
 
 i2c:

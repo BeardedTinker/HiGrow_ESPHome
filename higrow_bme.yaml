@@ -1,0 +1,99 @@
+esphome:
+  name: soil-sensor-03
+
+logger:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+captive_portal:
+
+esp32:
+  board: lolin_d32
+
+api:
+
+ota:
+  password: !secret ota_password
+
+esp32_ble_tracker:
+
+switch:
+  - platform: gpio
+    pin: GPIO4
+    name: "Sensor Power"
+    id: spower
+    restore_mode: ALWAYS_ON
+    internal: true
+    setup_priority: 1000
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: GPIO35
+      inverted: True
+    name: "Wake Button"
+
+i2c:
+  sda: 25
+  scl: 26
+  scan: True
+  id: bus_a
+
+sensor:
+  - platform: adc
+    pin: GPIO32
+    name: "Soil Moisture"
+    update_interval: 15min
+    attenuation: 11db
+    unit_of_measurement: '%'
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 3.08 -> 0.0
+          - 1.42 -> 100.0
+    
+  - platform: adc
+    pin: 33
+    name: "Battery"
+    attenuation: 6db
+    unit_of_measurement: 'V'
+    update_interval: 15min
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 0.0 -> 0.0
+          - 2.06 -> 1.89
+      - lambda: return x * 2.0;
+        
+  - platform: adc
+    pin: GPIO34
+    name: "Salt"
+    update_interval: 15min
+    accuracy_decimals: 4    
+    unit_of_measurement: 'µS/cm'
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 0.0 -> 0.0
+          - 1.1 -> 100.0
+    
+  - platform: bh1750
+    i2c_id: bus_a
+    name: "BH1750 Illuminance"
+    address: 0x23
+    update_interval: 15min
+    setup_priority: -300
+
+  - platform: bme280
+    i2c_id: bus_a        
+    temperature:
+      name: "BME280 Temperature"
+      oversampling: 1x
+    pressure:
+      name: "BME280 Pressure"
+    humidity:
+      name: "BME280 Humidity"
+    address: 0x77
+    update_interval: 120s
